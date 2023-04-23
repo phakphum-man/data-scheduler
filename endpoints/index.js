@@ -13,7 +13,7 @@ module.exports = function (app) {
         return res.status(200).send(`Start API Scheduler`);
     });
 
-    app.get('/everyThirtyMinute', (req, res) => {
+    app.post('/everyThirtyMinute', (req, res) => {
         // #swagger.ignore = true
         const tables = [{
             runtime: "1998-01-01 07:30:00",
