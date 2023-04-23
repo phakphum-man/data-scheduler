@@ -50,6 +50,6 @@ module.exports = function (app) {
 
         });
 
-        return res.status(200).send({message: "success"});
+        return res.status(200).send({message: `success(${runtimes.length} jobs)`});
     });
 };
