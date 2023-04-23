@@ -20,11 +20,11 @@ module.exports = function (app) {
             url: "https://data-keeper.onrender.com/livinginsider/chonburi",
             param: null
         },{
-            runtime: "1998-01-01 08:30:00",
+            runtime: "1998-01-01 08:00:00",
             url: "https://data-keeper.onrender.com/livinginsider/rayong",
             param: null
         },{
-            runtime: "1998-01-01 09:30:00",
+            runtime: "1998-01-01 08:30:00",
             url: "https://data-keeper.onrender.com/livinginsider/sellcost",
             param: null
         }];
