@@ -16,7 +16,7 @@ module.exports = function (app) {
     app.post('/everyThirtyMinute', (req, res) => {
         // #swagger.ignore = true
         const tables = [{
-            runtime: "1998-01-01 07:30:00",
+            runtime: "1998-01-01 14:30:00",
             url: "https://data-keeper.onrender.com/livinginsider/chonburi",
             param: null
         },{
