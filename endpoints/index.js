@@ -3,7 +3,7 @@ const timediff = require('timediff');
 
 let activeTime = (timeTable, timeCurrent) => {
     const diff = timediff(timeTable, timeCurrent, 'YMDHmS');
-    return (diff.hours === 0 && diff.minutes === 0 && diff.seconds === 0)
+    return (diff.hours === 0 && diff.minutes === 0)
 };
 module.exports = function (app) {
 	
