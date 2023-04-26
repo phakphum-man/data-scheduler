@@ -16,7 +16,7 @@ module.exports = function (app) {
     app.post('/everyThirtyMinute', (req, res) => {
         // #swagger.ignore = true
         const tables = [{
-            runtime: "1998-01-01 20:30:00",
+            runtime: "1998-01-01 21:00:00",
             url: "https://data-keeper.onrender.com/livinginsider/chonburi",
             param: null
         },{
@@ -29,7 +29,9 @@ module.exports = function (app) {
             param: null
         }];
 
-        var datetime = new Date();
+        let tZone = 'Asia/Bangkok'; //Target timezone from server
+        let datetime = new Date();//Init this to a time if you don't want current time
+        datetime = new Date(Date.parse(date.toLocaleString("en-US", {timeZone: tZone})));
         let schedules = tables.map(tb => ({
             runtime: tb.runtime,
             url: tb.url,
