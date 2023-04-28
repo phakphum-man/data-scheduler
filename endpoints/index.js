@@ -20,11 +20,11 @@ module.exports = function (app) {
         // #swagger.ignore = true
         const iv = process.env.IV || await fs.promises.readFile(path.join(process.cwd(), "iv.txt"), 'utf8');
         const tables = [{
-            runtime: "1998-01-01 23:30:00",
+            runtime: "1998-01-01 10:30:00",
             url: `https://data-keeper.onrender.com/livinginsider/chonburi?iv=${iv}`,
             param: null
         },{
-            runtime: "1998-01-01 22:00:00",
+            runtime: "1998-01-01 09:00:00",
             url: `https://data-keeper.onrender.com/livinginsider/rayong?iv=${iv}`,
             param: null
         },{
