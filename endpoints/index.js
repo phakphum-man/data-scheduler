@@ -28,7 +28,7 @@ module.exports = function (app) {
             url: `https://data-keeper.onrender.com/livinginsider/rayong?iv=${iv}`,
             param: null
         },{
-            runtime: "1998-01-01 19:30:00",
+            runtime: "1998-01-01 22:00:00",
             url: `https://data-keeper.onrender.com/livinginsider/sellcost?iv=${iv}`,
             param: null
         }];
