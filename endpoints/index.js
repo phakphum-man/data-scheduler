@@ -47,13 +47,21 @@ module.exports = function (app) {
         console.log(runtimes.length);
         runtimes.forEach((j) => {
 
-            let jobUrl = j.url;
-            axios.get(jobUrl)
+	    axios.get('https://data-keeper.onrender.com/')
             .then( oxioRes => {
-                console.log(`${jobUrl} => ${oxioRes.data}`)
+                console.log(`first request before procress`)
             })
             .catch(err => console.error(err));
-
+		
+	    let jobUrl = j.url;
+	    setTimeout(function() {
+                 axios.get(jobUrl)
+                 .then( oxioRes => {
+                      console.log(`${jobUrl} => ${oxioRes.data}`)
+                 });
+            .catch(err => console.error(err));
+            }, 3000);// 3 second.
+            
         });
 
         return res.status(200).send({message: `success(${runtimes.length} jobs)`, data: timediff("1998-01-01 20:30:00", datetime, 'YMDHmS')});
