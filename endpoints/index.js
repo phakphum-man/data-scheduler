@@ -55,11 +55,13 @@ module.exports = function (app) {
 		
 	    let jobUrl = j.url;
 	    setTimeout(function() {
+		    
                  axios.get(jobUrl)
                  .then( oxioRes => {
                       console.log(`${jobUrl} => ${oxioRes.data}`)
-                 });
-            .catch(err => console.error(err));
+                 })
+		 .catch(err => console.error(err));
+		    
             }, 3000);// 3 second.
             
         });
