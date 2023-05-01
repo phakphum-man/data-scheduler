@@ -21,15 +21,15 @@ module.exports = function (app) {
         const iv = process.env.IV || await fs.promises.readFile(path.join(process.cwd(), "iv.txt"), 'utf8');
         const tables = [{
             runtime: "1998-01-01 07:30:00",
-            url: `https://data-keeper.onrender.com/livinginsider/chonburi?iv=${iv}`,
+            url: `${process.env.API_KEEPER}/livinginsider/chonburi?iv=${iv}`,
             param: null
         },{
             runtime: "1998-01-01 09:30:00",
-            url: `https://data-keeper.onrender.com/livinginsider/rayong?iv=${iv}`,
+            url: `${process.env.API_KEEPER}/livinginsider/rayong?iv=${iv}`,
             param: null
         },{
             runtime: "1998-01-01 09:00:00",
-            url: `https://data-keeper.onrender.com/livinginsider/sellcost?iv=${iv}`,
+            url: `${process.env.API_KEEPER}/livinginsider/sellcost?iv=${iv}`,
             param: null
         }];
 
@@ -66,7 +66,7 @@ module.exports = function (app) {
             
         });
 
-        return res.status(200).send({message: `success(${runtimes.length} jobs)`, data: timediff("1998-01-01 20:30:00", datetime, 'YMDHmS')});
+        return res.status(200).send({message: `success(${runtimes.length} jobs)`, data: (runtimes.length > 0)? timediff(runtimes[0].runtime, datetime, 'YMDHmS'):null});
     });
 
     app.get('/encrypt', (req, res) => {
