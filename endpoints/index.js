@@ -47,7 +47,7 @@ module.exports = function (app) {
         console.log(runtimes.length);
         runtimes.forEach((j) => {
 
-	    axios.get('https://data-keeper.onrender.com/')
+	    axios.get(`${process.env.API_KEEPER}/`)
             .then( oxioRes => {
                 console.log(`first request before procress`)
             })
