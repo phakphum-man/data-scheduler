@@ -53,13 +53,13 @@ module.exports = function (app) {
                     console.log(`Wake up before procress ${jobUrl} => ${oxioRes.data}`)
                 })
                 .catch(err => console.error(err));
-            
-            axios.get(jobUrl)
+            setTimeout(() => {
+               axios.get(jobUrl)
                 .then( oxioRes => {
                     console.log(`${jobUrl} => ${oxioRes.data}`)
                 })
                 .catch(err => console.error(err));
-            
+	    }, 180000); // set 3 minutes
         });
 
         return res.status(200).send({message: `success(${runtimes.length} jobs)`, data: (runtimes.length > 0)? timediff(runtimes[0].runtime, datetime, 'YMDHmS'):null});
