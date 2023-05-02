@@ -47,13 +47,13 @@ module.exports = function (app) {
         console.log(runtimes.length);
         runtimes.forEach((j) => {
 
-            axios.get(`${process.env.API_KEEPER}/`)
+	    let jobUrl = j.url;
+            axios.get(jobUrl)
                 .then( oxioRes => {
-                    console.log(`Wake up before procress`)
+                    console.log(`Wake up before procress ${jobUrl} => ${oxioRes.data}`)
                 })
                 .catch(err => console.error(err));
             
-            let jobUrl = j.url;
             axios.get(jobUrl)
                 .then( oxioRes => {
                     console.log(`${jobUrl} => ${oxioRes.data}`)
