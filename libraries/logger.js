@@ -33,7 +33,7 @@ const logger = createLogger({
 });
 
 logger.on('data', (chunk => { // log listener
-  s3.upload(JSON.stringify(chunk)) // call s3 uploader and pass stringyfied json log
+  s3.write(JSON.stringify(chunk)) // call s3 uploader and pass stringyfied json log
 }));
 
 module.exports = logger;
