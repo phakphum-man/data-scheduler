@@ -8,13 +8,25 @@ module.exports = function (app) {
         // #swagger.description = 'Endpoint download file.'
         // #swagger.parameters['name'] = { type: 'string', description: 'name is required.' }
 
-        const s3File = await s3.getlog();
-
+        try{
+          const s3File = await s3.getlog();
+          res.set('Content-type', s3File.ContentType)
+          res.send(s3File.Body.toString()).end();
+        }
+        catch(error)
+        {
+          if (error.code === 'NoSuchKey') {
+            console.log(`No such key ${filename}`)
+            res.sendStatus(404).end()
+          } else {
+            console.log(error)
+            res.sendStatus(500).end()
+          }
+        }
         /* #swagger.responses[200] = { 
                description: 'File Content.' 
         } */
-        res.set('Content-type', s3File.ContentType)
-        res.send(s3File.Body.toString()).end();
+        
     });
 
     app.delete('/log', async (req, res) => {
