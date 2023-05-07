@@ -21,15 +21,15 @@ module.exports = function (app) {
         // #swagger.ignore = true
         const iv = process.env.IV || await fs.promises.readFile(path.join(process.cwd(), "iv.txt"), 'utf8');
         const tables = [{
-            runtime: "1998-01-01 07:30:00",
+            runtime: "1998-01-01 15:30:00",//"1998-01-01 07:30:00",
             url: `${process.env.API_KEEPER}/livinginsider/chonburi?iv=${iv}`,
             param: null
         },{
-            runtime: "1998-01-01 09:30:00",
+            runtime: "1998-01-01 16:30:00",//"1998-01-01 09:30:00",
             url: `${process.env.API_KEEPER}/livinginsider/rayong?iv=${iv}`,
             param: null
         },{
-            runtime: "1998-01-01 09:00:00",
+            runtime: "1998-01-01 17:00:00",//"1998-01-01 09:00:00",
             url: `${process.env.API_KEEPER}/livinginsider/sellcost?iv=${iv}`,
             param: null
         }];
@@ -49,7 +49,7 @@ module.exports = function (app) {
         runtimes.forEach((j) => {
 
 	    let jobUrl = j.url;
-            axios.get(jobUrl)
+            axios.get(`${process.env.API_KEEPER}/`)
                 .then( oxioRes => {
                     logger.info(`Wake up before procress ${jobUrl} => ${oxioRes.data}`);
                 })
