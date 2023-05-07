@@ -12,3 +12,4 @@ console.log("Environment is %s", ((process.env.NODE_ENV)? process.env.NODE_ENV :
 console.log("Listening at: %s://%s:%s/", protocol, host, port);
 
 require('./endpoints/index')(app);
+require('./endpoints/logs')(app);

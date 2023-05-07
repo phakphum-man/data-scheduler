@@ -1,16 +1,21 @@
 'use strict';
 
 const { createLogger, format, transports } = require("winston");
-require('winston-mongodb');
+const s3 = require('../libraries/s3');
 
 const env = process.env.NODE_ENV || 'development';
 
+const timezoned = () => {
+  return new Date().toLocaleString('en-US', {
+      timeZone: process.env.TZ
+  });
+}
 const logger = createLogger({
     // change level if in dev environment versus production
     level: env === 'development' ? 'debug' : 'info',
     format: format.combine(
         format.timestamp({
-          format: 'YYYY-MM-DD HH:mm:ss'
+          format: timezoned//'YYYY-MM-DD HH:mm:ss'
         }),
         format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
     ),
@@ -23,15 +28,12 @@ const logger = createLogger({
               info => `${info.timestamp} ${info.level}: ${info.message}`
             )
           )
-        }),
-        new transports.MongoDB({
-          level: env === 'development' ? 'debug' : 'info',
-          collection: "cyclicLog",
-          db: process.env.MONGO_URI,
-          options: { useNewUrlParser: true, useUnifiedTopology: true },
-          maxsize: 52428800, // 50MB
         })
       ]
 });
+
+logger.on('data', (chunk => { // log listener
+  s3.upload(JSON.stringify(chunk)) // call s3 uploader and pass stringyfied json log
+}));
 
 module.exports = logger;
