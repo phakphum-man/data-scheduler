@@ -4,6 +4,7 @@ const path = require('path');
 const axios = require('axios');
 const timediff = require('timediff');
 const crypto = require("crypto");
+const logger = require('../libraries/logger');
 
 let activeTime = (timeTable, timeCurrent) => {
     const diff = timediff(timeTable, timeCurrent, 'YMDHmS');
@@ -50,17 +51,21 @@ module.exports = function (app) {
 	    let jobUrl = j.url;
             axios.get(jobUrl)
                 .then( oxioRes => {
-                    console.log(`Wake up before procress ${jobUrl} => ${oxioRes.data}`)
+                    logger.info(`Wake up before procress ${jobUrl} => ${oxioRes.data}`);
                 })
                 .catch(err => console.error(err));
             setTimeout(() => {
                axios.get(jobUrl)
                 .then( oxioRes => {
-                    console.log(`${jobUrl} => ${oxioRes.data}`)
+                    logger.info(`${jobUrl} => ${oxioRes.data}`);
                 })
-                .catch(err => console.error(err));
-	    }, 180000); // set 3 minutes
+                .catch(err => logger.error(err));
+	        }, 180000); // set 3 minutes
         });
+
+        if(runtimes.length > 0){
+            logger.info(`Run schedule(${runtimes.length} jobs) ${runtimes[0].runtime}`);
+        }
 
         return res.status(200).send({message: `success(${runtimes.length} jobs)`, data: (runtimes.length > 0)? timediff(runtimes[0].runtime, datetime, 'YMDHmS'):null});
     });

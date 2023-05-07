@@ -18,6 +18,8 @@
     "axios": "^1.3.6",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "timediff": "^1.1.1"
+    "timediff": "^1.1.1",
+    "winston": "^3.8.2",
+    "winston-daily-rotate-file": "^4.7.1"
   }
 }
