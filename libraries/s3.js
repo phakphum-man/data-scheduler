@@ -11,7 +11,7 @@ function write(data){
         Body: data
     };
 
-    s3.putObject(params, (err) => {
+    s3.upload(params, (err) => {
         console.log('s3 write error:: \n', err)
     })
 }
