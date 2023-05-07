@@ -16,8 +16,8 @@ module.exports = function (app) {
         catch(error)
         {
           if (error.code === 'NoSuchKey') {
-            console.log(`No such key ${filename}`)
-            res.sendStatus(404).end()
+            console.log(`No such key`);
+            res.status(404).send("file not found")
           } else {
             console.log(error)
             res.sendStatus(500).end()
