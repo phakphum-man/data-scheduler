@@ -1,4 +1,5 @@
 require('dotenv').config();
+const moment = require('moment-timezone');
 const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
@@ -14,6 +15,7 @@ module.exports = function (app) {
 	
     app.get('/', (req, res) => {
         // #swagger.ignore = true
+        logger.info(`${moment().tz(process.env.TZ).format()}: Start API Scheduler`);
         return res.status(200).send(`Start API Scheduler`);
     });
 
@@ -34,7 +36,7 @@ module.exports = function (app) {
             param: null
         }];
 
-        let tZone = 'Asia/Bangkok'; //Target timezone from server
+        let tZone = process.env.TZ; //Target timezone from server
         let datetime = new Date();//Init this to a time if you don't want current time
         datetime = new Date(Date.parse(datetime.toLocaleString("en-US", {timeZone: tZone})));
         let schedules = tables.map(tb => ({
@@ -51,20 +53,20 @@ module.exports = function (app) {
 	    let jobUrl = j.url;
             axios.get(`${process.env.API_KEEPER}/`)
                 .then( oxioRes => {
-                    logger.info(`Wake up before procress ${jobUrl} => ${oxioRes.data}`);
+                    logger.info(`${moment().tz(process.env.TZ).format()}: Wake up before procress ${jobUrl} => ${oxioRes.data}`);
                 })
-                .catch(err => console.error(err));
+                .catch(err => console.error(`${moment().tz(process.env.TZ).format()}: ${err}`));
             setTimeout(() => {
                axios.get(jobUrl)
                 .then( oxioRes => {
-                    logger.info(`${jobUrl} => ${oxioRes.data}`);
+                    logger.info(`${moment().tz(process.env.TZ).format()}: ${jobUrl} => ${oxioRes.data} done.`);
                 })
-                .catch(err => logger.error(err));
+                .catch(err => logger.error(`${moment().tz(process.env.TZ).format()}: ${err}`));
 	        }, 180000); // set 3 minutes
         });
 
         if(runtimes.length > 0){
-            logger.info(`Run schedule(${runtimes.length} jobs) ${runtimes[0].runtime}`);
+            logger.info(`${moment().tz(process.env.TZ).format()}: Run schedule(${runtimes.length} jobs) ${runtimes[0].runtime}`);
         }
 
         return res.status(200).send({message: `success(${runtimes.length} jobs)`, data: (runtimes.length > 0)? timediff(runtimes[0].runtime, datetime, 'YMDHmS'):null});

@@ -1,22 +1,9 @@
 'use strict';
+
 const { createLogger, format, transports } = require("winston");
-require('winston-daily-rotate-file');
-const fs = require('fs');
-const path = require('path');
+require('winston-mongodb');
 
 const env = process.env.NODE_ENV || 'development';
-const logDir = `${process.cwd()}/logs`;
-
-// Create the log directory if it does not exist
-if (!fs.existsSync(logDir)) {
-    fs.mkdirSync(logDir);
-}
-
-const dailyRotateFileTransport = new transports.DailyRotateFile({
-    filename: `${logDir}/log-%DATE%.log`,
-    datePattern: 'YYYY-MM-DD',
-    maxFiles: "30d",
-});
 
 const logger = createLogger({
     // change level if in dev environment versus production
@@ -37,7 +24,13 @@ const logger = createLogger({
             )
           )
         }),
-        dailyRotateFileTransport
+        new transports.MongoDB({
+          level: env === 'development' ? 'debug' : 'info',
+          collection: "cyclicLog",
+          db: process.env.MONGO_URI,
+          options: { useNewUrlParser: true, useUnifiedTopology: true },
+          maxsize: 52428800, // 50MB
+        })
       ]
 });
 
