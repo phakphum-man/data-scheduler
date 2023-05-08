@@ -1,8 +1,10 @@
 'use strict';
 require('dotenv').config();
-const AWS = require('aws-sdk')
+const AWS = require('aws-sdk');
 
-const s3 = new AWS.S3()
+require("aws-sdk/lib/maintenance_mode_message").suppress = true;
+
+const s3 = new AWS.S3();
 
 function write(data){
     const params = {
