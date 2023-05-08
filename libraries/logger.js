@@ -1,6 +1,5 @@
 'use strict';
 require('dotenv').config();
-const { hostname } = require('node:os');
 const { createLogger, format, transports } = require("winston");
 const { S3StreamLogger } = require('s3-streamlogger');
 
@@ -15,7 +14,7 @@ const timezoned = () => {
 const s3_stream = new S3StreamLogger({
   bucket: process.env.CYCLIC_BUCKET_NAME,
   folder: 'logs',
-  name_format: `%Y-%m-%d-${hostname()}.log`
+  name_format: `%Y-%m-%d.log`
 });
 
 const s3Transport = new (transports.Stream)({
