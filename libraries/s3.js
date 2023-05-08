@@ -16,23 +16,33 @@ function write(data){
     })
 }
 
-async function getlog(){
+async function getAlllog(){
     const params = {
         Bucket: process.env.CYCLIC_BUCKET_NAME,
-        Key: 'logs/filelogger.log'
+        Prefix: 'logs'
+    };
+    return await s3.listObjectsV2(params).promise();
+}
+
+async function getlog(filename){
+    const params = {
+        Bucket: process.env.CYCLIC_BUCKET_NAME,
+        Key: `logs/${filename}`
     };
     return await s3.getObject(params).promise();
 }
 
-async function deletelog(){
+async function deletelog(filename){
+    //filelogger.log
     const params = {
         Bucket: process.env.CYCLIC_BUCKET_NAME,
-        Key: 'logs/filelogger.log'
+        Key: `logs/${filename}`
     };
     return await s3.deleteObject(params).promise();
 }
 
 module.exports = {
+    getAlllog: getAlllog,
     write: write,
     getlog: getlog,
     deletelog: deletelog
