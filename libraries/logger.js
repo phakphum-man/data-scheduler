@@ -14,7 +14,7 @@ const timezoned = () => {
 const s3_stream = new S3StreamLogger({
   bucket: process.env.CYCLIC_BUCKET_NAME,
   folder: 'logs',
-  name_format: `%Y-%m-%d.log`
+  name_format: `%Y-%m-%d-%H-%M.log`
 });
 
 const s3Transport = new (transports.Stream)({
