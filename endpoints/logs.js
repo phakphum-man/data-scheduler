@@ -10,7 +10,7 @@ module.exports = function (app) {
 
       try{
         const data = await s3.getAlllog();
-        res.status(200).send(data).end();
+        res.status(200).send(data.Contents).end();
       }
       catch(error)
       {
