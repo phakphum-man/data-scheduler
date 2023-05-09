@@ -53,9 +53,10 @@ module.exports = function (app) {
 	    let jobUrl = j.url;
             axios.get(`${process.env.API_KEEPER}/`)
                 .then( oxioRes => {
-                    console.log(`${moment().tz(process.env.TZ).format()}: Wake up before procress ${jobUrl} => ${oxioRes.data}`);
+                    console.log(`${moment().tz(process.env.TZ).format()}: Wake up before procress ${jobUrl} => ${oxioRes}`);
                 })
                 .catch(err => console.log(`${moment().tz(process.env.TZ).format()}: ${err}`));
+                
             setTimeout(() => {
                axios.get(jobUrl)
                 .then( oxioRes => {
