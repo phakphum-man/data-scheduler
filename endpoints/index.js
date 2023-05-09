@@ -23,19 +23,23 @@ module.exports = function (app) {
         // #swagger.ignore = true
         const iv = process.env.IV || await fs.promises.readFile(path.join(process.cwd(), "iv.txt"), 'utf8');
         const tables = [{
-            runtime: "1998-01-01 15:30:00",//"1998-01-01 07:30:00",
+            runtime: "1998-01-01 18:30:00",//"1998-01-01 07:30:00",
             url: `${process.env.API_KEEPER}/livinginsider/chonburi?iv=${iv}`,
-            param: null
+            param: null,
+            isTrigger: true
         },{
-            runtime: "1998-01-01 16:30:00",//"1998-01-01 09:30:00",
+            runtime: "1998-01-01 19:30:00",//"1998-01-01 09:30:00",
             url: `${process.env.API_KEEPER}/livinginsider/rayong?iv=${iv}`,
-            param: null
+            param: null,
+            isTrigger: false
         },{
-            runtime: "1998-01-01 17:00:00",//"1998-01-01 09:00:00",
+            runtime: "1998-01-01 20:00:00",//"1998-01-01 09:00:00",
             url: `${process.env.API_KEEPER}/livinginsider/sellcost?iv=${iv}`,
-            param: null
+            param: null,
+            isTrigger: false
         }];
-
+        //let schedules = tables;
+        
         let tZone = process.env.TZ; //Target timezone from server
         let datetime = new Date();//Init this to a time if you don't want current time
         datetime = new Date(Date.parse(datetime.toLocaleString("en-US", {timeZone: tZone})));
@@ -45,7 +49,7 @@ module.exports = function (app) {
             param: tb.param,
             isTrigger: activeTime(tb.runtime, datetime)
         }));
-
+        
         const runtimes = schedules.filter((tb)=> tb.isTrigger);
         const sleeper = (ms) => {
             return (x) => {
@@ -54,42 +58,22 @@ module.exports = function (app) {
         }
 
         if(runtimes.length > 0){
-            console.log(`${moment().tz(process.env.TZ).format()}: Run schedule(${runtimes.length} jobs) ${runtimes[0].runtime}`);
+            logger.info(`${moment().tz(process.env.TZ).format()}: Run schedule(${runtimes.length} jobs) ${runtimes[0].runtime}`);
 
             let endpoints = [`${process.env.API_KEEPER}/`];
             runtimes.forEach((j) => {
                 endpoints.push(j.url);
             });
 
-            Promise.all(endpoints.map((endpoint) => axios.get(endpoint))).then(([{data: wakeup}, {data: schedule}] )=> {
-                if(wakeup && !schedule){
-                    console.log(`${moment().tz(process.env.TZ).format()}: Wake up before procress ${wakeup}`);
-                }else{
-                    console.log(`${moment().tz(process.env.TZ).format()}: => ${schedule} done.`);
-                }
-                sleeper(120000); // 2 minutes
-            });
+            Promise.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
+                axios.spread(({data: wakeup}, {data: schedule}) => {
+                    logger.info(`${moment().tz(process.env.TZ).format()}: ${wakeup}`);
+                    logger.info(`${moment().tz(process.env.TZ).format()}: => ${schedule} done.`);
+                })
+            );
         }
-        /*
-        runtimes.forEach((j) => {
-
-	        let jobUrl = j.url;
-            axios.get(`${process.env.API_KEEPER}/`)
-                .then( oxioRes => {
-                    console.log(`${moment().tz(process.env.TZ).format()}: Wake up before procress ${jobUrl} => ${oxioRes}`);
-                })
-                .catch(err => console.log(`${moment().tz(process.env.TZ).format()}: ${err}`));
-
-            setTimeout(() => {
-               axios.get(jobUrl)
-                .then( oxioRes => {
-                    console.log(`${moment().tz(process.env.TZ).format()}: ${jobUrl} => ${oxioRes.data} done.`);
-                })
-                .catch(err => console.log(`${moment().tz(process.env.TZ).format()}: ${err}`));
-	        }, 180000); // set 3 minutes
-        }); */
-
-        return res.status(200).send({message: `success(${runtimes.length} jobs)`, data: (runtimes.length > 0)? timediff(runtimes[0].runtime, datetime, 'YMDHmS'):null});
+        
+        return res.status(200).send({message: `success(${runtimes.length} jobs)`, data: (runtimes.length > 0)? timediff(runtimes[0].runtime, datetime, 'YMDHmS') : null });
     });
 
     app.get('/encrypt', (req, res) => {
