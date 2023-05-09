@@ -53,20 +53,20 @@ module.exports = function (app) {
 	    let jobUrl = j.url;
             axios.get(`${process.env.API_KEEPER}/`)
                 .then( oxioRes => {
-                    logger.info(`${moment().tz(process.env.TZ).format()}: Wake up before procress ${jobUrl} => ${oxioRes.data}`);
+                    console.log(`${moment().tz(process.env.TZ).format()}: Wake up before procress ${jobUrl} => ${oxioRes.data}`);
                 })
-                .catch(err => console.error(`${moment().tz(process.env.TZ).format()}: ${err}`));
+                .catch(err => console.log(`${moment().tz(process.env.TZ).format()}: ${err}`));
             setTimeout(() => {
                axios.get(jobUrl)
                 .then( oxioRes => {
-                    logger.info(`${moment().tz(process.env.TZ).format()}: ${jobUrl} => ${oxioRes.data} done.`);
+                    console.log(`${moment().tz(process.env.TZ).format()}: ${jobUrl} => ${oxioRes.data} done.`);
                 })
-                .catch(err => logger.error(`${moment().tz(process.env.TZ).format()}: ${err}`));
+                .catch(err => console.log(`${moment().tz(process.env.TZ).format()}: ${err}`));
 	        }, 180000); // set 3 minutes
         });
 
         if(runtimes.length > 0){
-            logger.info(`${moment().tz(process.env.TZ).format()}: Run schedule(${runtimes.length} jobs) ${runtimes[0].runtime}`);
+            console.log(`${moment().tz(process.env.TZ).format()}: Run schedule(${runtimes.length} jobs) ${runtimes[0].runtime}`);
         }
 
         return res.status(200).send({message: `success(${runtimes.length} jobs)`, data: (runtimes.length > 0)? timediff(runtimes[0].runtime, datetime, 'YMDHmS'):null});
