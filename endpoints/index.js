@@ -23,15 +23,15 @@ module.exports = function (app) {
         // #swagger.ignore = true
         const iv = process.env.IV || await fs.promises.readFile(path.join(process.cwd(), "iv.txt"), 'utf8');
         const tables = [{
-            runtime: "1998-01-01 12:30:00",//"1998-01-01 07:30:00",
+            runtime: "1998-01-01 15:30:00",//"1998-01-01 07:30:00",
             url: `${process.env.API_KEEPER}/livinginsider/chonburi?iv=${iv}`,
             param: null
         },{
-            runtime: "1998-01-01 13:30:00",//"1998-01-01 09:30:00",
+            runtime: "1998-01-01 16:30:00",//"1998-01-01 09:30:00",
             url: `${process.env.API_KEEPER}/livinginsider/rayong?iv=${iv}`,
             param: null
         },{
-            runtime: "1998-01-01 14:00:00",//"1998-01-01 09:00:00",
+            runtime: "1998-01-01 17:00:00",//"1998-01-01 09:00:00",
             url: `${process.env.API_KEEPER}/livinginsider/sellcost?iv=${iv}`,
             param: null
         }];
@@ -47,16 +47,39 @@ module.exports = function (app) {
         }));
 
         const runtimes = schedules.filter((tb)=> tb.isTrigger);
-        console.log(runtimes.length);
+        const sleeper = (ms) => {
+            return (x) => {
+              return new Promise(resolve => setTimeout(() => resolve(x), ms));
+            };
+        }
+
+        if(runtimes.length > 0){
+            console.log(`${moment().tz(process.env.TZ).format()}: Run schedule(${runtimes.length} jobs) ${runtimes[0].runtime}`);
+
+            let endpoints = [`${process.env.API_KEEPER}/`];
+            runtimes.forEach((j) => {
+                endpoints.push(j.url);
+            });
+
+            Promise.all(endpoints.map((endpoint) => axios.get(endpoint))).then(([{data: wakeup}, {data: schedule}] )=> {
+                if(wakeup && !schedule){
+                    console.log(`${moment().tz(process.env.TZ).format()}: Wake up before procress ${wakeup}`);
+                }else{
+                    console.log(`${moment().tz(process.env.TZ).format()}: => ${schedule} done.`);
+                }
+                sleeper(120000); // 2 minutes
+            });
+        }
+        /*
         runtimes.forEach((j) => {
 
-	    let jobUrl = j.url;
+	        let jobUrl = j.url;
             axios.get(`${process.env.API_KEEPER}/`)
                 .then( oxioRes => {
                     console.log(`${moment().tz(process.env.TZ).format()}: Wake up before procress ${jobUrl} => ${oxioRes}`);
                 })
                 .catch(err => console.log(`${moment().tz(process.env.TZ).format()}: ${err}`));
-                
+
             setTimeout(() => {
                axios.get(jobUrl)
                 .then( oxioRes => {
@@ -64,11 +87,7 @@ module.exports = function (app) {
                 })
                 .catch(err => console.log(`${moment().tz(process.env.TZ).format()}: ${err}`));
 	        }, 180000); // set 3 minutes
-        });
-
-        if(runtimes.length > 0){
-            console.log(`${moment().tz(process.env.TZ).format()}: Run schedule(${runtimes.length} jobs) ${runtimes[0].runtime}`);
-        }
+        }); */
 
         return res.status(200).send({message: `success(${runtimes.length} jobs)`, data: (runtimes.length > 0)? timediff(runtimes[0].runtime, datetime, 'YMDHmS'):null});
     });
