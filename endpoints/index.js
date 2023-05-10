@@ -23,22 +23,27 @@ module.exports = function (app) {
         // #swagger.ignore = true
         const iv = process.env.IV || await fs.promises.readFile(path.join(process.cwd(), "iv.txt"), 'utf8');
         const tables = [{
-            runtime: "1998-01-01 07:00:00",//"1998-01-01 07:30:00",
+            runtime: "1998-01-01 07:00:00",
+            url: `${process.env.API_KEEPER}/`,
+            param: null,
+            isTrigger: true
+        },{
+            runtime: "1998-01-01 07:20:00",
             url: `${process.env.API_KEEPER}/goldprice/excel?iv=${iv}`,
             param: null,
             isTrigger: true
         },{
-            runtime: "1998-01-01 07:30:00",//"1998-01-01 07:30:00",
+            runtime: "1998-01-01 08:00:00",
             url: `${process.env.API_KEEPER}/livinginsider/chonburi?iv=${iv}`,
             param: null,
             isTrigger: true
         },{
-            runtime: "1998-01-01 08:30:00",//"1998-01-01 09:30:00",
+            runtime: "1998-01-01 09:40:00",
             url: `${process.env.API_KEEPER}/livinginsider/rayong?iv=${iv}`,
             param: null,
             isTrigger: false
         },{
-            runtime: "1998-01-01 09:00:00",//"1998-01-01 09:00:00",
+            runtime: "1998-01-01 08:40:00",
             url: `${process.env.API_KEEPER}/livinginsider/sellcost?iv=${iv}`,
             param: null,
             isTrigger: false
