@@ -19,7 +19,7 @@ module.exports = function (app) {
         return res.status(200).send(`Start API Scheduler`);
     });
 
-    app.post('/everyThirtyMinute', async (req, res) => {
+    app.post('/everyTwentyMinute', async (req, res) => {
         // #swagger.ignore = true
         const iv = process.env.IV || await fs.promises.readFile(path.join(process.cwd(), "iv.txt"), 'utf8');
         const tables = [{
