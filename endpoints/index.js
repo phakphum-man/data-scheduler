@@ -66,7 +66,7 @@ module.exports = function (app) {
               return new Promise(resolve => setTimeout(() => resolve(x), ms));
             };
         }
-
+        console.log(`Start wakeup ${process.env.API_KEEPER}/`);
         // Test wakeup
         axios.get(`${process.env.API_KEEPER}/`,{
             headers: {
