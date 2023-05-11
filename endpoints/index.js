@@ -70,7 +70,7 @@ module.exports = function (app) {
         // Test wakeup
         axios.get(`${process.env.API_KEEPER}/`,{
             headers: {
-              Accept: "application/json",
+              Accept: "application/json, text/plain, */*",
               "User-Agent": "axios 0.21.1"
             }
         }).then((response) => {
@@ -90,7 +90,7 @@ module.exports = function (app) {
 
             Promise.all(endpoints.map((endpoint) => axios.get(endpoint,{
                 headers: {
-                  Accept: "application/json",
+                  Accept: "application/json, text/plain, */*",
                   "User-Agent": "axios 0.21.1"
                 }
             }))).then(
