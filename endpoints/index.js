@@ -67,9 +67,9 @@ module.exports = function (app) {
             };
         }
 	try{
-        console.log(`Start wakeup ${process.env.API_KEEPER}/`);
+        console.log(`Start wakeup ${process.env.API_KEEPER}/wakeup`);
         // Test wakeup
-        const response = await axios.get(`${process.env.API_KEEPER}/`,{
+        const response = await axios.get(`${process.env.API_KEEPER}/wakeup`,{
             headers: {
               Accept: "application/json, text/plain, */*",
               "User-Agent": "axios 0.21.1"
@@ -84,7 +84,7 @@ module.exports = function (app) {
         if(runtimes.length > 0){
             logger.info(`${moment().tz(process.env.TZ).format()}: Run schedule(${runtimes.length} jobs) ${runtimes[0].runtime}`);
 
-            let endpoints = [`${process.env.API_KEEPER}/`];
+            let endpoints = [`${process.env.API_KEEPER}/wakeup`];
             runtimes.forEach((j) => {
                 endpoints.push(j.url);
             });
