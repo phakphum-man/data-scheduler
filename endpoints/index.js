@@ -67,6 +67,14 @@ module.exports = function (app) {
             };
         }
 
+        // Test wakeup
+        axios.get(`${process.env.API_KEEPER}/`).then((response) => {
+            console.log(`wakeup => ${response}`);
+        })
+        .catch((error) => {
+            console.error(`wakeup error => ${error}`);
+        });
+
         if(runtimes.length > 0){
             logger.info(`${moment().tz(process.env.TZ).format()}: Run schedule(${runtimes.length} jobs) ${runtimes[0].runtime}`);
 
