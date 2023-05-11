@@ -68,7 +68,12 @@ module.exports = function (app) {
         }
 
         // Test wakeup
-        axios.get(`${process.env.API_KEEPER}/`).then((response) => {
+        axios.get(`${process.env.API_KEEPER}/`,{
+            headers: {
+              Accept: "application/json",
+              "User-Agent": "axios 0.21.1"
+            }
+        }).then((response) => {
             console.log(`wakeup => ${response}`);
         })
         .catch((error) => {
@@ -83,7 +88,12 @@ module.exports = function (app) {
                 endpoints.push(j.url);
             });
 
-            Promise.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
+            Promise.all(endpoints.map((endpoint) => axios.get(endpoint,{
+                headers: {
+                  Accept: "application/json",
+                  "User-Agent": "axios 0.21.1"
+                }
+            }))).then(
                 axios.spread(({data: wakeup}, {data: schedule}) => {
                     logger.info(`${moment().tz(process.env.TZ).format()}: ${wakeup}`);
                     logger.info(`${moment().tz(process.env.TZ).format()}: => ${schedule} done.`);
