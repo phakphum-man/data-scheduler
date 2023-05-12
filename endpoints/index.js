@@ -24,7 +24,7 @@ module.exports = function (app) {
         const iv = process.env.IV || await fs.promises.readFile(path.join(process.cwd(), "iv.txt"), 'utf8');
         const tables = [{
             runtime: "1998-01-01 07:00:00",
-            url: `${process.env.DEPLOY_HOOK}&ref={process.env.COMMIT}`,
+            url: `${process.env.DEPLOY_HOOK}&ref=${process.env.COMMIT}`,
             param: null,
             isTrigger: true
         },{
