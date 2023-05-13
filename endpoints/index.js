@@ -69,23 +69,18 @@ module.exports = function (app) {
 
         if(runtimes.length > 0){
             logger.info(`${moment().tz(process.env.TZ).format()}: Run schedule(${runtimes.length} jobs) ${runtimes[0].runtime}`);
-
-            let endpoints = [`${process.env.API_KEEPER}/wakeup`];
-            runtimes.forEach((j) => {
-                endpoints.push(j.url);
-            });
-
-            Promise.all(endpoints.map((endpoint) => axios.get(endpoint,{
+url
+            axios.get(runtimes[0].url,{
                 headers: {
                   Accept: "application/json, text/plain, */*",
                   "User-Agent": "axios 0.21.1"
                 }
-            }))).then(
-                axios.spread(({data: wakeup}, {data: schedule}) => {
-                    logger.info(`${moment().tz(process.env.TZ).format()}: ${wakeup}`);
-                    logger.info(`${moment().tz(process.env.TZ).format()}: => ${schedule} done.`);
-                })
-            );
+            }).then((schedule)=>{
+                console.log(`${moment().tz(process.env.TZ).format()}: => ${schedule} done.`);
+            })
+            .catch((error)=>{
+                console.error(error);
+            });
         }
         
         return res.status(200).send({message: `success(${runtimes.length} jobs)`, data: (runtimes.length > 0)? timediff(runtimes[0].runtime, datetime, 'YMDHmS') : null });
