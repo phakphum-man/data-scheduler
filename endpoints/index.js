@@ -66,21 +66,7 @@ module.exports = function (app) {
               return new Promise(resolve => setTimeout(() => resolve(x), ms));
             };
         }
-	try{
-        console.log(`Start wakeup ${process.env.API_KEEPER}/wakeup`);
-        // Test wakeup
-        const response = await axios.get(`${process.env.API_KEEPER}/wakeup`,{
-            headers: {
-              Accept: "application/json, text/plain, */*",
-              "User-Agent": "axios 0.21.1"
-            }
-        });
-		console.log(`wakeup => ${response}`)
-	}
-        catch(error)
-	{
-	    console.error(`wakeup error => ${error}`);
-        }
+
         if(runtimes.length > 0){
             logger.info(`${moment().tz(process.env.TZ).format()}: Run schedule(${runtimes.length} jobs) ${runtimes[0].runtime}`);
 
