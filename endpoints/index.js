@@ -28,22 +28,22 @@ module.exports = function (app) {
             param: null,
             isTrigger: true
         },{
-            runtime: "1998-01-01 07:20:00",
+            runtime: "1998-01-01 09:20:00",
             url: `${process.env.API_KEEPER}/goldprice/excel?iv=${iv}`,
             param: null,
             isTrigger: true
         },{
-            runtime: "1998-01-01 08:00:00",
+            runtime: "1998-01-01 10:00:00",
             url: `${process.env.API_KEEPER}/livinginsider/chonburi?iv=${iv}`,
             param: null,
             isTrigger: true
         },{
-            runtime: "1998-01-01 09:40:00",
+            runtime: "1998-01-01 11:40:00",
             url: `${process.env.API_KEEPER}/livinginsider/rayong?iv=${iv}`,
             param: null,
             isTrigger: false
         },{
-            runtime: "1998-01-01 08:40:00",
+            runtime: "1998-01-01 10:40:00",
             url: `${process.env.API_KEEPER}/livinginsider/sellcost?iv=${iv}`,
             param: null,
             isTrigger: false
