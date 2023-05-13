@@ -23,27 +23,27 @@ module.exports = function (app) {
         // #swagger.ignore = true
         const iv = process.env.IV || await fs.promises.readFile(path.join(process.cwd(), "iv.txt"), 'utf8');
         const tables = [{
-            runtime: "1998-01-01 09:00:00",
+            runtime: "1998-01-01 06:00:00",
             url: `${process.env.DEPLOY_HOOK}&ref=${process.env.COMMIT}`,
             param: null,
             isTrigger: true
         },{
-            runtime: "1998-01-01 09:20:00",
+            runtime: "1998-01-01 06:20:00",
             url: `${process.env.API_KEEPER}/goldprice/excel?iv=${iv}`,
             param: null,
             isTrigger: true
         },{
-            runtime: "1998-01-01 10:00:00",
+            runtime: "1998-01-01 07:00:00",
             url: `${process.env.API_KEEPER}/livinginsider/chonburi?iv=${iv}`,
             param: null,
             isTrigger: true
         },{
-            runtime: "1998-01-01 14:40:00",
+            runtime: "1998-01-01 08:40:00",
             url: `${process.env.API_KEEPER}/livinginsider/rayong?iv=${iv}`,
             param: null,
             isTrigger: false
         },{
-            runtime: "1998-01-01 13:40:00",
+            runtime: "1998-01-01 07:40:00",
             url: `${process.env.API_KEEPER}/livinginsider/sellcost?iv=${iv}`,
             param: null,
             isTrigger: false
@@ -68,7 +68,7 @@ module.exports = function (app) {
         }
 
         if(runtimes.length > 0){
-            logger.info(`${moment().tz(process.env.TZ).format()}: Run schedule(${runtimes.length} jobs) ${runtimes[0].runtime}`);
+            console.log(`${moment().tz(process.env.TZ).format()}: Run schedule(${runtimes.length} jobs) ${runtimes[0].runtime}`);
             axios.get(runtimes[0].url,{
                 headers: {
                   Accept: "application/json, text/plain, */*",
