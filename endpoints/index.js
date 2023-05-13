@@ -38,12 +38,12 @@ module.exports = function (app) {
             param: null,
             isTrigger: true
         },{
-            runtime: "1998-01-01 11:40:00",
+            runtime: "1998-01-01 14:40:00",
             url: `${process.env.API_KEEPER}/livinginsider/rayong?iv=${iv}`,
             param: null,
             isTrigger: false
         },{
-            runtime: "1998-01-01 10:40:00",
+            runtime: "1998-01-01 13:40:00",
             url: `${process.env.API_KEEPER}/livinginsider/sellcost?iv=${iv}`,
             param: null,
             isTrigger: false
