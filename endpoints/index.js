@@ -69,7 +69,6 @@ module.exports = function (app) {
 
         if(runtimes.length > 0){
             logger.info(`${moment().tz(process.env.TZ).format()}: Run schedule(${runtimes.length} jobs) ${runtimes[0].runtime}`);
-url
             axios.get(runtimes[0].url,{
                 headers: {
                   Accept: "application/json, text/plain, */*",
