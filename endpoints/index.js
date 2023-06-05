@@ -28,7 +28,7 @@ module.exports = function (app) {
             param: null,
             isTrigger: true
         },{
-            runtime: "1998-01-01 19:20:00",
+            runtime: "1998-01-01 19:40:00",
             url: `${process.env.API_KEEPER}/goldprice/excel?iv=${iv}`,
             param: null,
             isTrigger: true
