@@ -27,27 +27,44 @@ module.exports = function (app) {
             url: `${process.env.DEPLOY_HOOK}&ref=${process.env.COMMIT}`,
             param: null,
             isTrigger: true
-        },{
+        },
+        {
             runtime: "1998-01-01 19:40:00",
-            url: `${process.env.API_KEEPER}/goldprice/excel?iv=${iv}`,
+            url: `${process.env.API_KEEPER}/goldprice/line?iv=${iv}`,
             param: null,
             isTrigger: true
-        },{
-            runtime: "1998-01-01 07:00:00",
-            url: `${process.env.API_KEEPER}/livinginsider/chonburi?iv=${iv}`,
+        },
+        {
+            runtime: "1998-01-01 09:40:00",
+            url: `${process.env.API_KEEPER}/goldprice/line?iv=${iv}`,
             param: null,
             isTrigger: true
-        },{
-            runtime: "1998-01-01 09:00:00",
-            url: `${process.env.API_KEEPER}/livinginsider/rayong?iv=${iv}`,
+        },
+        {
+            runtime: "1998-01-01 15:00:00",
+            url: `${process.env.API_KEEPER}/goldprice/line?iv=${iv}`,
             param: null,
-            isTrigger: false
-        },{
-            runtime: "1998-01-01 08:00:00",
-            url: `${process.env.API_KEEPER}/livinginsider/sellcost?iv=${iv}`,
-            param: null,
-            isTrigger: false
-        }];
+            isTrigger: true
+        }
+        // {
+        //     runtime: "1998-01-01 07:00:00",
+        //     url: `${process.env.API_KEEPER}/livinginsider/chonburi?iv=${iv}`,
+        //     param: null,
+        //     isTrigger: true
+        // },
+        // {
+        //     runtime: "1998-01-01 09:00:00",
+        //     url: `${process.env.API_KEEPER}/livinginsider/rayong?iv=${iv}`,
+        //     param: null,
+        //     isTrigger: false
+        // },
+        // {
+        //     runtime: "1998-01-01 08:00:00",
+        //     url: `${process.env.API_KEEPER}/livinginsider/sellcost?iv=${iv}`,
+        //     param: null,
+        //     isTrigger: false
+        // }
+        ];
         //let schedules = tables;
         
         let tZone = process.env.TZ; //Target timezone from server
