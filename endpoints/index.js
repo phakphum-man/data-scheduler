@@ -29,20 +29,20 @@ module.exports = function (app) {
             isTrigger: true
         },
         {
-            runtime: "1998-01-01 19:40:00",
-            url: `${process.env.API_KEEPER}/goldprice/line?iv=${iv}`,
+            runtime: "1998-01-01 18:20:00",
+            url: `${process.env.API_KEEPER}/goldprice/line?iv=last`,
             param: null,
             isTrigger: true
         },
         {
             runtime: "1998-01-01 09:40:00",
-            url: `${process.env.API_KEEPER}/goldprice/line?iv=${iv}`,
+            url: `${process.env.API_KEEPER}/goldprice/line`,
             param: null,
             isTrigger: true
         },
         {
             runtime: "1998-01-01 15:00:00",
-            url: `${process.env.API_KEEPER}/goldprice/line?iv=${iv}`,
+            url: `${process.env.API_KEEPER}/goldprice/line`,
             param: null,
             isTrigger: true
         }
