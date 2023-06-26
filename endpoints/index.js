@@ -30,6 +30,12 @@ module.exports = function (app) {
         },
         {
             runtime: "1998-01-01 18:20:00",
+            url: `${process.env.DEPLOY_HOOK}&ref=${process.env.COMMIT}`,
+            param: null,
+            isTrigger: true
+        },
+        {
+            runtime: "1998-01-01 19:20:00",
             url: `${process.env.API_KEEPER}/goldprice/line?iv=last`,
             param: null,
             isTrigger: true
