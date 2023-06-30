@@ -29,13 +29,13 @@ module.exports = function (app) {
             isTrigger: true
         },
         {
-            runtime: "1998-01-01 18:00:00",
+            runtime: "1998-01-01 17:40:00",
             url: `${process.env.DEPLOY_HOOK}&ref=${process.env.COMMIT}`,
             param: null,
             isTrigger: true
         },
         {
-            runtime: "1998-01-01 18:20:00",
+            runtime: "1998-01-01 18:00:00",
             url: `${process.env.API_KEEPER}/goldprice/line?iv=last`,
             param: null,
             isTrigger: true
@@ -92,6 +92,7 @@ module.exports = function (app) {
 
         if(runtimes.length > 0){
             console.log(`${moment().tz(process.env.TZ).format()}: Run schedule(${runtimes.length} jobs) ${runtimes[0].runtime}`);
+            console.log(`${runtimes[0].url}`);
             axios.get(runtimes[0].url,{
                 headers: {
                   Accept: "application/json, text/plain, */*",
