@@ -1,5 +1,6 @@
 const { GoogleSpreadsheet } = require("google-spreadsheet");
 const { JWT } = require("google-auth-library");
+require('dotenv').config();
 const keys = {
     client_email: process.env.GG_CLIENT_EMAIL,
     private_key: `-----BEGIN PRIVATE KEY-----\n${process.env.GG_PRIVATE_KEY}\n-----END PRIVATE KEY-----\n`

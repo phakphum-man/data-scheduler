@@ -60,6 +60,7 @@ const getFile = async (fileId, filePath) => {
           function(err, { data }) {
             if (err) {
               reject("The API returned an error: " + err);
+              return;
             }
             let buf = [];
             data.on("data", function(e) {

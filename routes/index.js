@@ -303,7 +303,7 @@ const downloadFile = async (fileId) => {
   })
 }
 router.get('/getfile/:id', async (req, res, next) => {
-  //url  => '/getfile/1vSMNx70fbFgvzH1ZQ0pvcwGQUVaZxHWK'
+  //url  => '/getfile/1vSMNx70fbFgvzH1ZQ0pvcwGQUVaZxHWK?file=/jsonforms/form-schema.json'
   const file = req.query.file;
   const result = await googleDrive.getFile(req.params.id, file); //downloadFile(req.params.id);
   return res.send(result);
