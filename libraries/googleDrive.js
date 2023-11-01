@@ -16,7 +16,8 @@ const googleDrive = async () => {
             "https://www.googleapis.com/auth/drive.file"
         ]
     });
-  
+    console.log(keys.client_email);
+    console.log(keys.private_key);
     // Instance of google Drive
     const googleDriveV3 = google.drive({ version: "v3", auth: auth });
     return googleDriveV3;
