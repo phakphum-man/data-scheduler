@@ -1,0 +1,25 @@
+extends layout
+
+block content
+    h1= title
+    form
+    div#res.alert
+    script(type='text/javascript', src='../javascripts/jquery.min.js')
+    script(type='text/javascript', src='../javascripts/underscore.js')
+    script(type='text/javascript', src='../javascripts/jsv.js')
+    script(type='text/javascript', src='../javascripts/jsonform.js')
+    script(type='text/javascript', src='../javascripts/jsonform-template.js')
+    script(type='text/javascript') $('form').jsonForm(!{escapeJsonForm(jsonForm)}); $(".form-group").addClass("col-sm-3");
+    -
+        function escapeJsonForm(json){
+            let strJson = JSON.stringify(json, function(key,value){
+                if(typeof value === 'function'){
+                    return value.toString().replace(/\s+/g, ' ').replaceAll("\"","\"\"");
+                }
+                return value;
+            }/*,3*/);
+            strJson = strJson.replaceAll(/\"function(?:\s|)\(/g,"function (");
+            strJson = strJson.replaceAll("}\"","}");
+            strJson = strJson.replaceAll("\\\"\\\"","\"");
+            return strJson;
+        }
