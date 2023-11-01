@@ -3,13 +3,23 @@ const { JWT } = require("google-auth-library");
 require('dotenv').config();
 const keys = {
     client_email: process.env.GG_CLIENT_EMAIL,
-    private_key: `-----BEGIN PRIVATE KEY-----\n${process.env.GG_PRIVATE_KEY}\n-----END PRIVATE KEY-----\n`
+    private_key: process.env.GG_PRIVATE_KEY
 };
 
 async function getDocument(spreadsheetId){
+    const algorithm = process.env.ALGORITHM;
+
+    const key = process.env.PRIVATE_KEY;
+    const iv = process.env.IV;
+    const dataEncrypted = keys.private_key;
+
+    const decipher = crypto.createDecipheriv(algorithm, Buffer.from(key, 'base64'), Buffer.from(iv, 'base64'));
+    let decryptedData = decipher.update(dataEncrypted, "hex", "utf-8")
+    decryptedData += decipher.final("utf8");
+
     const serviceAccountAuth = new JWT({
         email: keys.client_email,
-        key: keys.private_key,
+        key: decryptedData,
         scopes: [
             "https://www.googleapis.com/auth/spreadsheets"
         ]
