@@ -1,6 +1,9 @@
 const { GoogleSpreadsheet } = require("google-spreadsheet");
 const { JWT } = require("google-auth-library");
-const keys = require("../../data-keeper/4bcb9ac3-8de1-4330-9f08-f0046774f7ad.json");
+const keys = {
+    client_email: process.env.GG_CLIENT_EMAIL,
+    private_key: `-----BEGIN PRIVATE KEY-----\n${process.env.GG_PRIVATE_KEY}\n-----END PRIVATE KEY-----\n`
+};
 
 async function getDocument(spreadsheetId){
     const serviceAccountAuth = new JWT({

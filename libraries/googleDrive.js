@@ -2,7 +2,10 @@ const {google} = require('googleapis');
 const { JWT } = require("google-auth-library");
 require('dotenv').config();
 const fs = require('@cyclic.sh/s3fs')(process.env.CYCLIC_BUCKET_NAME);
-const keys = require("../../data-keeper/4bcb9ac3-8de1-4330-9f08-f0046774f7ad.json");
+const keys = {
+  client_email: process.env.GG_CLIENT_EMAIL,
+  private_key: `-----BEGIN PRIVATE KEY-----\n${process.env.GG_PRIVATE_KEY}\n-----END PRIVATE KEY-----\n`
+};
 
 const googleDrive = async () => {
     const auth = new JWT({
