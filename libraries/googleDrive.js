@@ -57,11 +57,13 @@ const getFile = async (fileId, filePath) => {
             supportsAllDrives: true
           },
           { responseType: "stream" },
-          function(err, { data }) {
+          function(err, result) {
             if (err) {
               reject("The API returned an error: " + err);
               return;
             }
+            console.log(result)
+            const data = result.data;
             let buf = [];
             data.on("data", function(e) {
               buf.push(e);
