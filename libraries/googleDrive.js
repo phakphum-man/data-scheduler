@@ -61,7 +61,7 @@ const getFile = async (fileId, filePath) => {
   if(fileExists){
     return JSON.parse(fs.readFileSync(filePath));
   }
-  
+
   const drive = googleDrive();
   const filePromise = new Promise((resolve, reject) => {
       drive.files.get({
@@ -97,11 +97,19 @@ const getFile = async (fileId, filePath) => {
 
 const deleteFile = (filePath) => {
     //@cyclic.sh/s3fs supports the following fs methods operating on AWS S3:
+    const fileExists = fs.existsSync(filePath);
+    if(!fileExists){
+        return { result:"File not found"};
+    }
     fs.unlinkSync(filePath);
 }
 
 const getFileList = (filePath) => {
     //@cyclic.sh/s3fs supports the following fs methods operating on AWS S3:
+    const fileExists = fs.existsSync(filePath);
+    if(!fileExists){
+        return { result:"File not found"};
+    }
     return fs.readdirSync(filePath);
 }
 
