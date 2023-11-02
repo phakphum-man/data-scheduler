@@ -10,6 +10,7 @@ let express = require('express');
 const { title } = require('process');
 const googleSheet = require("../libraries/googleSpreadSheet");
 const googleDrive = require("../libraries/googleDrive");
+const { googleStoreKey } = require('../libraries/googleSecret');
 let router = express.Router();
 let csrfProtection = csrf({ cookie: true })
 
@@ -260,6 +261,16 @@ router.get('/list', async (req, res, next) =>{
 });
 
 router.post('/create', csrfProtection, function(req, res) {
+  res.send('data is being processed')
+});
+router.post('/gg',function(req, res) {
+  const path = req.query.path;
+  const key = req.body;
+  if(!path || !key)
+  {
+    return res.send(404);
+  }
+  googleStoreKey(path, JSON.stringify(key));
   res.send('data is being processed')
 });
 

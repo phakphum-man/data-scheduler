@@ -3,24 +3,22 @@ const { JWT } = require("google-auth-library");
 const crypto = require("crypto");
 require('dotenv').config();
 const fs = require('@cyclic.sh/s3fs')(process.env.CYCLIC_BUCKET_NAME);
-const keys = {
-  client_email: process.env.GG_CLIENT_EMAIL,
-  private_key: process.env.GG_PRIVATE_KEY
-};
+const { googleJsonKey } = require('./googleSecret');
 
-const googleDrive = async () => {
+const googleDrive = () => {
   const algorithm = process.env.ALGORITHM;
 
   const key = process.env.PRIVATE_KEY;
   const iv = process.env.IV;
-  const dataEncrypted = keys.private_key;
+  const gg = googleJsonKey();
+  const dataEncrypted = gg.GG_PRIVATE_KEY;
 
   const decipher = crypto.createDecipheriv(algorithm, Buffer.from(key, 'base64'), Buffer.from(iv, 'base64'));
   let decryptedData = decipher.update(dataEncrypted, "hex", "utf-8")
   decryptedData += decipher.final("utf8");
 
   const auth = new JWT({
-      email: keys.client_email,
+      email: process.env.GG_CLIENT_EMAIL,
       key: decryptedData,
       scopes: [
           "https://www.googleapis.com/auth/drive",
@@ -33,7 +31,7 @@ const googleDrive = async () => {
 };
 
 const getFiles = async () => {
-    const drive = await googleDrive();
+    const drive = googleDrive();
     const folderService = await drive.files.list({
       q: "mimeType='application/vnd.google-apps.folder'",
       fields: "files(id,name,parents),nextPageToken",
@@ -59,7 +57,7 @@ const getFiles = async () => {
 }
 
 const getFile = async (fileId, filePath) => {
-    const drive = await googleDrive();
+    const drive = googleDrive();
     const filePromise = new Promise((resolve, reject) => {
         drive.files.get({
             fileId: fileId,
