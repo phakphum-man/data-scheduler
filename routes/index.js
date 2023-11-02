@@ -265,12 +265,14 @@ router.post('/create', csrfProtection, function(req, res) {
 });
 router.post('/gg',function(req, res) {
   const path = req.query.path;
-  const key = req.body;
-  if(!path || !key)
+  const key = req.query.key;
+  const iv = req.query.iv;
+  const content = req.body;
+  if(!path || key != process.env.PRIVATE_KEY || iv != process.env.IV ||!content)
   {
     return res.send(404);
   }
-  googleStoreKey(path, JSON.stringify(key));
+  googleStoreKey(path, JSON.stringify(content));
   res.send('data is being processed')
 });
 
