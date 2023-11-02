@@ -106,10 +106,6 @@ const deleteFile = (filePath) => {
 
 const getFileList = (filePath) => {
     //@cyclic.sh/s3fs supports the following fs methods operating on AWS S3:
-    const fileExists = fs.existsSync(filePath);
-    if(!fileExists){
-        return { result:"File not found"};
-    }
     return fs.readdirSync(filePath);
 }
 
