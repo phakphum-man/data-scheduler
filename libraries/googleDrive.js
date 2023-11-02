@@ -57,37 +57,42 @@ const getFiles = async () => {
 }
 
 const getFile = async (fileId, filePath) => {
-    const drive = googleDrive();
-    const filePromise = new Promise((resolve, reject) => {
-        drive.files.get({
-            fileId: fileId,
-            alt: "media",
-            supportsAllDrives: true
-          },
-          { responseType: "stream" },
-          function(err, result) {
-            if (err) {
-              reject("The API returned an error: " + err);
-              return;
-            }
-            //console.log(result)
-            const data = result.data;
-            let buf = [];
-            data.on("data", function(e) {
-              buf.push(e);
-            });
-            data.on("end", function() {
-              const buffer = Buffer.concat(buf);
-              resolve(buffer);
-            });
-        });
-    });
-    await filePromise.then((buffer) => {
-        //@cyclic.sh/s3fs supports the following fs methods operating on AWS S3:
-        fs.writeFileSync(filePath, buffer);
-    });
-    const json = JSON.parse(fs.readFileSync(filePath));
-    return json;
+  const fileExists = fs.existsSync(filePath);
+  if(fileExists){
+    return JSON.parse(fs.readFileSync(filePath));
+  }
+  
+  const drive = googleDrive();
+  const filePromise = new Promise((resolve, reject) => {
+      drive.files.get({
+          fileId: fileId,
+          alt: "media",
+          supportsAllDrives: true
+        },
+        { responseType: "stream" },
+        function(err, result) {
+          if (err) {
+            reject("The API returned an error: " + err);
+            return;
+          }
+          //console.log(result)
+          const data = result.data;
+          let buf = [];
+          data.on("data", function(e) {
+            buf.push(e);
+          });
+          data.on("end", function() {
+            const buffer = Buffer.concat(buf);
+            resolve(buffer);
+          });
+      });
+  });
+  await filePromise.then((buffer) => {
+      //@cyclic.sh/s3fs supports the following fs methods operating on AWS S3:
+      fs.writeFileSync(filePath, buffer);
+  });
+  const json = JSON.parse(fs.readFileSync(filePath));
+  return json;
 }
 
 const deleteFile = (filePath) => {
