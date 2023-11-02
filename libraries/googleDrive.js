@@ -106,7 +106,12 @@ const deleteFile = (filePath) => {
 
 const getFileList = (filePath) => {
     //@cyclic.sh/s3fs supports the following fs methods operating on AWS S3:
-    return fs.readdirSync(filePath);
+    try{
+      const files = fs.readdirSync(filePath);
+      return files;
+    }catch(e){
+      return { result:"directory not found" };
+    }
 }
 
 module.exports = { getFiles, getFile, deleteFile, getFileList };
