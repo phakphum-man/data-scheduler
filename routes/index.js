@@ -10,6 +10,7 @@ let express = require('express');
 const { title } = require('process');
 const googleSheet = require("../libraries/googleSpreadSheet");
 const googleDrive = require("../libraries/googleDrive");
+const s3fs = require("../libraries/s3fs");
 const { googleStoreKey } = require('../libraries/googleSecret');
 let router = express.Router();
 let csrfProtection = csrf({ cookie: true })
@@ -318,7 +319,8 @@ const downloadFile = async (fileId) => {
 router.get('/getfile/:id', async (req, res, next) => {
   //url  => '/getfile/1vSMNx70fbFgvzH1ZQ0pvcwGQUVaZxHWK?file=/jsonforms/form-schema.json'
   const file = req.query.file;
-  const result = await googleDrive.getFile(req.params.id, file); //downloadFile(req.params.id);
+  const isOverwrite = (req.query.isflush)?req.query.isforce == "1": false;
+  const result = await googleDrive.getFile(req.params.id, file, isOverwrite); //downloadFile(req.params.id);
   return res.send(result);
 });
 router.get('/s3/get/files', async (req, res, next) => {
@@ -327,7 +329,7 @@ router.get('/s3/get/files', async (req, res, next) => {
   {
     return res.send(404);
   }
-  const files = googleDrive.getFileList(path);
+  const files = s3fs.getFileList(path);
   res.json(files);
 });
 router.get('/s3/deletefile', async (req, res, next) => {
@@ -336,7 +338,7 @@ router.get('/s3/deletefile', async (req, res, next) => {
   {
     return res.send(404);
   }
-  googleDrive.deleteFile(file);
+  s3fs.deleteFile(file);
   res.json({"success": true});
 });
 router.get('/get/files', async (req, res, next) => {

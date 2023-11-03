@@ -56,9 +56,9 @@ const getFiles = async () => {
     return items;
 }
 
-const getFile = async (fileId, filePath) => {
+const getFile = async (fileId, filePath, IsOverwrite = false) => {
   const fileExists = fs.existsSync(filePath);
-  if(fileExists){
+  if(fileExists && IsOverwrite === false){
     return JSON.parse(fs.readFileSync(filePath));
   }
 
@@ -95,23 +95,4 @@ const getFile = async (fileId, filePath) => {
   return json;
 }
 
-const deleteFile = (filePath) => {
-    //@cyclic.sh/s3fs supports the following fs methods operating on AWS S3:
-    const fileExists = fs.existsSync(filePath);
-    if(!fileExists){
-        return { result:"File not found"};
-    }
-    fs.unlinkSync(filePath);
-}
-
-const getFileList = (filePath) => {
-    //@cyclic.sh/s3fs supports the following fs methods operating on AWS S3:
-    try{
-      const files = fs.readdirSync(filePath);
-      return files;
-    }catch(e){
-      return { result:"directory not found" };
-    }
-}
-
-module.exports = { getFiles, getFile, deleteFile, getFileList };
+module.exports = { getFiles, getFile};
