@@ -20,6 +20,8 @@ block content
             }/*,3*/);
             strJson = strJson.replaceAll(/\"function(?:\s|)\(/g,"function (");
             strJson = strJson.replaceAll("}\"","}");
+            strJson = strJson.replaceAll("(\\\"","(\"");
+            strJson = strJson.replaceAll("\\\")","\")");
             strJson = strJson.replaceAll("\\\"\\\"","\"");
             return strJson;
         }

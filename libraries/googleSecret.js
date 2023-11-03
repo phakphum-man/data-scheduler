@@ -1,5 +1,6 @@
 const fs = require('@cyclic.sh/s3fs')(process.env.CYCLIC_BUCKET_NAME);
-const private_path = ((!process.env.AWS_SECRET_ACCESS_KEY)?'./':'/')+'private/gg.json';
+const s3Path = (!process.env.AWS_SECRET_ACCESS_KEY)?'./':'/';
+const private_path = s3Path +'private/gg.json';
 
 const googleJsonKey = () => {
     const fileExists = fs.existsSync(private_path);
@@ -14,4 +15,4 @@ const googleStoreKey = (path, jsonContent) => {
         fs.writeFileSync(private_path, jsonContent);
     }
 }
-module.exports = { googleJsonKey, googleStoreKey };
+module.exports = { googleJsonKey, googleStoreKey, s3Path};

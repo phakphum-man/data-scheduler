@@ -11,7 +11,7 @@ const { title } = require('process');
 const googleSheet = require("../libraries/googleSpreadSheet");
 const googleDrive = require("../libraries/googleDrive");
 const s3fs = require("../libraries/s3fs");
-const { googleStoreKey } = require('../libraries/googleSecret');
+const { googleStoreKey, s3Path } = require('../libraries/googleSecret');
 let router = express.Router();
 let csrfProtection = csrf({ cookie: true })
 
@@ -19,6 +19,19 @@ let activeTime = (timeTable, timeCurrent) => {
   const diff = timediff(timeTable, timeCurrent, 'YMDHmS');
   return (diff.hours === 0 && diff.minutes === 0)
 };
+
+function escapeJsonForm(json){
+  let strJson = JSON.stringify(json, function(key,value){
+      if(typeof value === 'function'){
+          return value.toString().replace(/\s+/g, ' ').replaceAll("\"","\"\"");
+      }
+      return value;
+  }/*,3*/);
+  strJson = strJson.replaceAll(/\"function(?:\s|)\(/g,"function (");
+  strJson = strJson.replaceAll("}\"","}");
+  strJson = strJson.replaceAll("\\\"\\\"","\"");
+  return strJson;
+}
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -170,56 +183,31 @@ router.get('/iv', async (req, res) => {
   return res.status(200).send(iv);
 });
 
-router.get('/form', csrfProtection, function(req, res, next) {
-  let schema = {
-    name: {
-      type: 'string',
-      title: 'Name',
-      default: "Name",
-      required: true
-    },
-    surname: {
-      type: 'string',
-      title: 'Surname',
-      default: "Surname",
-      required: true
-    },
-    fullname: {
-      type: 'string',
-      title: 'Full name'
-    },
-    age: {
-      type: 'number',
-      title: 'Age'
-    }
-  };
+router.get('/form', csrfProtection, async function(req, res, next) {
+  let schema = {};
 
-  let form = [
-    {
-      type: "divRow",
-      items: [
-        {
-          "key": "name",
-          "onChange": function (evt) {
-            var value = $(evt.target).val();
-            if (value) $("[name='fullname']").val(value);
-          }
-        },
-        'surname',
-        'fullname',
-        'age'
-      ]
-    },{
-      type: "divRow",
-      items: [
-        "name",
-        'surname',
-        'fullname',
-        'age'
-      ]
-    }
-  ];
+  let form = [];
 
+  const csrf = req.csrfToken();
+  const viewform = req.query.f;
+  const gdrive_files = await googleDrive.getFiles();
+  const formItems = gdrive_files.filter((f) =>f.name === viewform); 
+
+  if(formItems.length > 0){
+    const selectItems = formItems[0].children;
+    const layoutJs = selectItems.filter((f) =>f.name.toString().endsWith("-layout.json"));
+    if(layoutJs.length > 0){
+      const getLayout = await axios.get(`${req.protocol}://${req.get('host')}/gdrive/${layoutJs[0].id}?file=${s3Path}jsonforms/${layoutJs[0].name}&_csrf=${csrf}`);
+      form = getLayout.data;
+    }
+    const schemaJs = selectItems.filter((f) =>f.name.toString().endsWith("-schema.json"));
+    if(schemaJs.length > 0){
+      const getShema = await axios.get(`${req.protocol}://${req.get('host')}/gdrive/${schemaJs[0].id}?file=${s3Path}jsonforms/${schemaJs[0].name}&_csrf=${csrf}`);
+      schema = getShema.data;
+    }
+  }else{
+    return res.status(404).send("Not Found");
+  }
   /** begin csrfToken **/
   schema = Object.assign({}, schema, {
     _csrf: {
@@ -316,8 +304,8 @@ const downloadFile = async (fileId) => {
     );
   })
 }
-router.get('/getfile/:id', async (req, res, next) => {
-  //url  => '/getfile/1vSMNx70fbFgvzH1ZQ0pvcwGQUVaZxHWK?file=/jsonforms/form-schema.json'
+router.get('/gdrive/:id', csrfProtection, async (req, res, next) => {
+  //url  => '/gdrive/1vSMNx70fbFgvzH1ZQ0pvcwGQUVaZxHWK?file=/jsonforms/form-schema.json&_csrf=xxxxxxx'
   const file = req.query.file;
   const isOverwrite = (req.query.isflush)?req.query.isforce == "1": false;
   const result = await googleDrive.getFile(req.params.id, file, isOverwrite); //downloadFile(req.params.id);
