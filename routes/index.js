@@ -11,7 +11,7 @@ const { title } = require('process');
 const googleSheet = require("../libraries/googleSpreadSheet");
 const googleDrive = require("../libraries/googleDrive");
 const s3fs = require("../libraries/s3fs");
-const { googleStoreKey, s3Path } = require('../libraries/googleSecret');
+const { googleStoreKey, selfHostUrl, s3Path } = require('../libraries/googleSecret');
 let router = express.Router();
 let csrfProtection = csrf({ cookie: true })
 
@@ -197,12 +197,12 @@ router.get('/form', csrfProtection, async function(req, res, next) {
     const selectItems = formItems[0].children;
     const layoutJs = selectItems.filter((f) =>f.name.toString().endsWith("-layout.json"));
     if(layoutJs.length > 0){
-      const getLayout = await axios.get(`https://${req.get('host')}/gdrive/${layoutJs[0].id}?file=${s3Path}jsonforms/${layoutJs[0].name}&_csrf=${csrf}`);
+      const getLayout = await axios.get(`${selfHostUrl()}/gdrive/${layoutJs[0].id}?file=${s3Path}jsonforms/${layoutJs[0].name}&_csrf=${csrf}`);
       form = getLayout.data;
     }
     const schemaJs = selectItems.filter((f) =>f.name.toString().endsWith("-schema.json"));
     if(schemaJs.length > 0){
-      const getShema = await axios.get(`https://${req.get('host')}/gdrive/${schemaJs[0].id}?file=${s3Path}jsonforms/${schemaJs[0].name}&_csrf=${csrf}`);
+      const getShema = await axios.get(`${selfHostUrl()}/gdrive/${schemaJs[0].id}?file=${s3Path}jsonforms/${schemaJs[0].name}&_csrf=${csrf}`);
       schema = getShema.data;
     }
   }else{

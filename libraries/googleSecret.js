@@ -15,4 +15,8 @@ const googleStoreKey = (path, jsonContent) => {
         fs.writeFileSync(private_path, jsonContent);
     }
 }
-module.exports = { googleJsonKey, googleStoreKey, s3Path};
+
+const selfHostUrl = () => {
+    return `${(!process.env.AWS_SECRET_ACCESS_KEY)?req.protocol:"https"}://${req.get('host')}`;
+}
+module.exports = { googleJsonKey, googleStoreKey, selfHostUrl, s3Path};
