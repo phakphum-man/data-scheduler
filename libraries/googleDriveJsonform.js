@@ -2,10 +2,7 @@ const googleDrive = require("./googleDrive");
 const axios = require("axios");
 const { selfHostUrl, s3Path } = require("./googleSecret");
 
-const getJsonForm = async (req) => {
-  const viewform = req.query.f;
-  const csrf = req.csrfToken();
-
+const getJsonForm = async (viewform, csrf, protocol, host) => {
   let schema = {};
   let form = [];
   const gdrive_files = await googleDrive.getFiles();
@@ -18,7 +15,7 @@ const getJsonForm = async (req) => {
     );
     if (layoutJs.length > 0) {
       const getLayout = await axios.get(
-        `${selfHostUrl(req)}/gdrive/${layoutJs[0].id}?file=${s3Path}jsonforms/${
+        `${selfHostUrl(protocol, host)}/gdrive/${layoutJs[0].id}?file=${s3Path}jsonforms/${
           layoutJs[0].name
         }&_csrf=${csrf}`
       );
@@ -29,7 +26,7 @@ const getJsonForm = async (req) => {
     );
     if (schemaJs.length > 0) {
       const getShema = await axios.get(
-        `${selfHostUrl(req)}/gdrive/${schemaJs[0].id}?file=${s3Path}jsonforms/${
+        `${selfHostUrl(protocol, host)}/gdrive/${schemaJs[0].id}?file=${s3Path}jsonforms/${
           schemaJs[0].name
         }&_csrf=${csrf}`
       );

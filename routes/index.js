@@ -188,7 +188,9 @@ router.get('/form', csrfProtection, async function(req, res, next) {
   let schema = {};
   let form = [];
 
-  const jsonFormData = await getJsonForm(req);
+  const viewform = req.query.f;
+  const csrf = req.csrfToken();
+  const jsonFormData = await getJsonForm(viewform, csrf, req.protocol, req.get('host'));
   if(jsonFormData != null) {
     schema = jsonFormData.schema;
     form = jsonFormData.form;
@@ -197,12 +199,18 @@ router.get('/form', csrfProtection, async function(req, res, next) {
   }
   /** begin csrfToken **/
   schema = Object.assign({}, schema, {
+    f: {
+      type: 'string',
+      title: 'form',
+      default: viewform
+    },
     _csrf: {
       type: 'string',
       title: 'csrfToken',
       default: req.csrfToken()
     }
   });
+  form.push({ "type": "hidden", "key": "f"});
   form.push({ "type": "hidden", "key": "_csrf"});
   /** end csrfToken **/
 
@@ -211,6 +219,7 @@ router.get('/form', csrfProtection, async function(req, res, next) {
   let onSubmit = function (errors, values) {
     if (errors) {
       $('#res').html('<p>Error: '+ errors + '</p>');
+      return;
     } else {
       $.ajax({
         url: '/create',
@@ -223,6 +232,7 @@ router.get('/form', csrfProtection, async function(req, res, next) {
           console.log(xhr, resp, text);
         }
       });
+      return;
     }
   };
   
@@ -236,8 +246,18 @@ router.get('/list', async (req, res, next) =>{
   res.render('dynamic-form/list', { title: 'List pug mixin "_tableRow.pug"', employees: query.results });
 });
 
-router.post('/create', csrfProtection, function(req, res) {
-  res.send('data is being processed')
+router.post('/create', csrfProtection, async function(req, res) {
+  const data = req.body;
+  if(data && data.f){
+    const viewform = data['f'];
+    const jsonFormData = await getJsonForm(viewform, csrf, req.protocol, req.get('host'));
+    const values = Object.keys(jsonFormData.schema).map(k => {
+      return { [k]: !data[k]?null:data[k] };
+    })
+    res.send('data is being processed');
+    return;
+  }
+  res.status(404).send('404 Not Found')
 });
 router.post('/gg',function(req, res) {
   const path = req.query.path;

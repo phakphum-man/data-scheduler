@@ -16,7 +16,7 @@ const googleStoreKey = (path, jsonContent) => {
     }
 }
 
-const selfHostUrl = (req) => {
-    return `${(!process.env.AWS_SECRET_ACCESS_KEY)?req.protocol:"https"}://${req.get('host')}`;
+const selfHostUrl = (protocol, host) => {
+    return `${(!process.env.AWS_SECRET_ACCESS_KEY)?protocol:"https"}://${host}`;
 }
 module.exports = { googleJsonKey, googleStoreKey, selfHostUrl, s3Path};
