@@ -10,6 +10,7 @@ let express = require('express');
 const { title } = require('process');
 const googleSheet = require("../libraries/googleSpreadSheet");
 const googleDrive = require("../libraries/googleDrive");
+const { getJsonForm } = require("../libraries/googleDriveJsonform");
 const s3fs = require("../libraries/s3fs");
 const { googleStoreKey, selfHostUrl, s3Path } = require('../libraries/googleSecret');
 let router = express.Router();
@@ -185,26 +186,12 @@ router.get('/iv', async (req, res) => {
 
 router.get('/form', csrfProtection, async function(req, res, next) {
   let schema = {};
-
   let form = [];
 
-  const csrf = req.csrfToken();
-  const viewform = req.query.f;
-  const gdrive_files = await googleDrive.getFiles();
-  const formItems = gdrive_files.filter((f) =>f.name === viewform); 
-
-  if(formItems.length > 0){
-    const selectItems = formItems[0].children;
-    const layoutJs = selectItems.filter((f) =>f.name.toString().endsWith("-layout.json"));
-    if(layoutJs.length > 0){
-      const getLayout = await axios.get(`${selfHostUrl(req)}/gdrive/${layoutJs[0].id}?file=${s3Path}jsonforms/${layoutJs[0].name}&_csrf=${csrf}`);
-      form = getLayout.data;
-    }
-    const schemaJs = selectItems.filter((f) =>f.name.toString().endsWith("-schema.json"));
-    if(schemaJs.length > 0){
-      const getShema = await axios.get(`${selfHostUrl(req)}/gdrive/${schemaJs[0].id}?file=${s3Path}jsonforms/${schemaJs[0].name}&_csrf=${csrf}`);
-      schema = getShema.data;
-    }
+  const jsonFormData = await getJsonForm(req);
+  if(jsonFormData != null) {
+    schema = jsonFormData.schema;
+    form = jsonFormData.form;
   }else{
     return res.status(404).send("Not Found");
   }
