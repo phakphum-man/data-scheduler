@@ -42,36 +42,37 @@ router.get('/', function(req, res, next) {
 router.post('/everyTwentyMinute', async (req, res) => {
   // #swagger.ignore = true
   const iv = process.env.IV || await fs.promises.readFile(path.join(process.cwd(), "iv.txt"), 'utf8');
-  const tables = [{
-      runtime: "1998-01-01 06:00:00",
-      url: `${process.env.DEPLOY_HOOK}&ref=${process.env.COMMIT}`,
-      param: null,
-      isTrigger: true
-  },
-  {
-      runtime: "1998-01-01 17:40:00",
-      url: `${process.env.DEPLOY_HOOK}&ref=${process.env.COMMIT}`,
-      param: null,
-      isTrigger: true
-  },
-  {
-      runtime: "1998-01-01 18:00:00",
-      url: `${process.env.API_KEEPER}/goldprice/line?iv=last`,
-      param: null,
-      isTrigger: true
-  },
-  {
-      runtime: "1998-01-01 09:40:00",
-      url: `${process.env.API_KEEPER}/goldprice/line`,
-      param: null,
-      isTrigger: true
-  },
-  {
-      runtime: "1998-01-01 15:00:00",
-      url: `${process.env.API_KEEPER}/goldprice/line`,
-      param: null,
-      isTrigger: true
-  }
+  const tables = [
+  // {
+  //     runtime: "1998-01-01 06:00:00",
+  //     url: `${process.env.DEPLOY_HOOK}&ref=${process.env.COMMIT}`,
+  //     param: null,
+  //     isTrigger: true
+  // },
+  // {
+  //     runtime: "1998-01-01 17:40:00",
+  //     url: `${process.env.DEPLOY_HOOK}&ref=${process.env.COMMIT}`,
+  //     param: null,
+  //     isTrigger: true
+  // },
+  // {
+  //     runtime: "1998-01-01 18:00:00",
+  //     url: `${process.env.API_KEEPER}/goldprice/line?iv=last`,
+  //     param: null,
+  //     isTrigger: true
+  // },
+  // {
+  //     runtime: "1998-01-01 09:40:00",
+  //     url: `${process.env.API_KEEPER}/goldprice/line`,
+  //     param: null,
+  //     isTrigger: true
+  // },
+  // {
+  //     runtime: "1998-01-01 15:00:00",
+  //     url: `${process.env.API_KEEPER}/goldprice/line`,
+  //     param: null,
+  //     isTrigger: true
+  // },
   // {
   //     runtime: "1998-01-01 07:00:00",
   //     url: `${process.env.API_KEEPER}/livinginsider/chonburi?iv=${iv}`,
