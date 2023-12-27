@@ -12,6 +12,8 @@ const googleSheet = require("../libraries/googleSpreadSheet");
 const googleDrive = require("../libraries/googleDrive");
 const { getJsonForm } = require("../libraries/googleDriveJsonform");
 const s3fs = require("../libraries/s3fs");
+const line = require("../libraries/lineNotify");
+const { getCardExpiryFromNextWeek } = require("../libraries/notion");
 const { googleStoreKey, selfHostUrl, s3Path } = require('../libraries/googleSecret');
 let router = express.Router();
 let csrfProtection = csrf({ cookie: true })
@@ -35,14 +37,57 @@ function escapeJsonForm(json){
 }
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', function(req, res) {
   res.render('index', { title: 'Express' });
+});
+
+router.get('/card/notify', async function(req, res) {
+  const notifies = [7,4,2,1];
+  const cards = await getCardExpiryFromNextWeek();
+
+  if(cards && cards.length > 0) {
+    notifies.forEach(function(d){
+      const dateNow = moment(/*"2024-05-18"*/).tz(process.env.TZ).add(d,'day').format("YYYY-MM-DD");
+      const prev3Days = cards.filter(x => x.ExpireDate.date.start === dateNow);
+      if(prev3Days && prev3Days.length > 0){
+        //for loop : send line notification
+        prev3Days.forEach(card => {
+          let title = '';
+          let cardName = '';
+          if(card.Name.title && card.Name.title.length > 0){
+            title = card.Name.title[0].text.content;
+          }
+          if(card.CardName.rich_text && card.CardName.rich_text.length > 0){
+            cardName = card.CardName.rich_text[0].text.content;
+          }
+          console.log(`แจ้งตือน ${title} ${cardName} หมดอายุวันที่ ${moment(card.ExpireDate.date.start, "YYYY-MM-DD").format("D MMMM YYYY")}(คงเหลือ ${d} วัน)`);
+
+          const infos = [
+              "",
+              `แจ้งตือน ${title} ${cardName}`,
+              `หมดอายุวันที่ ${moment(card.ExpireDate.date.start, "YYYY-MM-DD").format("D MMMM YYYY")}`,
+              `(คงเหลือ ${d} วัน)`
+          ];
+          line.sendMessage(process.env.LINE_TOKEN, `${moment().format('dddd, Do MMMM YYYY')}\n${infos.join("\n")}`);
+        });
+        //return res.status(200).send(cards);
+      }
+    });
+  }
+
+  return res.status(200).send(/*cards*/`active notify card`);
 });
 
 router.post('/everyTwentyMinute', async (req, res) => {
   // #swagger.ignore = true
   const iv = process.env.IV || await fs.promises.readFile(path.join(process.cwd(), "iv.txt"), 'utf8');
   const tables = [
+      {
+        runtime: "1998-01-01 17:20:00",
+        url: `${req.protocol}://${req.get('host')}/card/notify`,
+        param: null,
+        isTrigger: true
+      }
   // {
   //     runtime: "1998-01-01 06:00:00",
   //     url: `${process.env.DEPLOY_HOOK}&ref=${process.env.COMMIT}`,
@@ -120,7 +165,7 @@ router.post('/everyTwentyMinute', async (req, res) => {
             "User-Agent": "axios 0.21.1"
           }
       }).then((schedule)=>{
-          console.log(`${moment().tz(process.env.TZ).format()}: => ${schedule} done.`);
+          console.log(`${moment().tz(process.env.TZ).format()}: => ${schedule.data} done.`);
       })
       .catch((error)=>{
           console.error(error);
