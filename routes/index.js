@@ -13,6 +13,7 @@ const googleDrive = require("../libraries/googleDrive");
 const { getJsonForm } = require("../libraries/googleDriveJsonform");
 const s3fs = require("../libraries/s3fs");
 const line = require("../libraries/lineNotify");
+const { generateAndWriteCSV } = require("../libraries/fakerWriteCsv");
 const { getCardExpiryFromNextWeek } = require("../libraries/notion");
 const { googleStoreKey, selfHostUrl, s3Path } = require('../libraries/googleSecret');
 let router = express.Router();
@@ -39,6 +40,22 @@ function escapeJsonForm(json){
 /* GET home page. */
 router.get('/', function(req, res) {
   res.render('index', { title: 'Express' });
+});
+
+router.get('/csv/fake/:record', async function(req, res) {
+  // ?f=https://drive.google.com/file/d/1BKeuWmNS8GAbKKAeYVimzOM52lDXT-90/view?usp=sharing
+  if(req.params.record && req.query.f){
+    let file_id_data = req.query.f;
+    if(file_id_data.indexOf("/file/d/") > -1){
+        const dns = file_id_data.slice(0, file_id_data.indexOf("/file/d/"));
+        const fileId = file_id_data.replace(`${dns}/file/d/`, "");
+        file_id_data = fileId.slice(0, fileId.indexOf("/"));
+    }
+    const url = `https://drive.google.com/uc?export=download&id=${file_id_data}`;
+    await generateAndWriteCSV(req.params.record, url);
+    return res.status(200).send(`write done!`);
+  }
+  return res.status(404).send();
 });
 
 router.get('/card/notify', async function(req, res) {
