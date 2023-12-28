@@ -7,7 +7,6 @@ const timediff = require('timediff');
 const crypto = require("crypto");
 const csrf = require('csurf');
 let express = require('express');
-const { title } = require('process');
 const googleSheet = require("../libraries/googleSpreadSheet");
 const googleDrive = require("../libraries/googleDrive");
 const { getJsonForm } = require("../libraries/googleDriveJsonform");
@@ -52,8 +51,9 @@ router.get('/csv/fake/:record', async function(req, res) {
         file_id_data = fileId.slice(0, fileId.indexOf("/"));
     }
     const url = `https://drive.google.com/uc?export=download&id=${file_id_data}`;
-    await generateAndWriteCSV(req.params.record, url);
-    return res.status(200).send(`write done!`);
+    const fileName = `output${(new Date()).toISOString().slice(0,19).replace("T","_").replaceAll(":","")}.csv`;
+    await generateAndWriteCSV(req.params.record, url, fileName);
+    return res.status(200).send(`write <a href="${req.protocol}://${req.get('host')}/s3/get/file?path=/fileservs/${fileName}">${fileName}</a> done!, you can see all files <a href="${req.protocol}://${req.get('host')}/s3/get/files?path=${s3fs.rootPath}fileservs">here</a>`);
   }
   return res.status(404).send();
 });
@@ -390,7 +390,30 @@ router.get('/s3/get/files', async (req, res, next) => {
   const files = s3fs.getFileList(path);
   res.json(files);
 });
-router.get('/s3/deletefile', async (req, res, next) => {
+router.get('/s3/get/file', async (req, res) => {
+  const path = req.query.path;
+  if(!path)
+  {
+    return res.send(404);
+  }
+  const fileContent = s3fs.readFileSync(path, { encoding: 'utf8', flag: 'r' });
+  res.status(200).send(fileContent);
+});
+router.get('/s3/clear/files', async (req, res, next) => {
+  const filePath = req.query.path;
+  if(!filePath)
+  {
+    return res.send(404);
+  }
+  const files = s3fs.getFileList(filePath);
+  files.forEach((file)=>{
+    const f = path.join(filePath, file);
+    s3fs.deleteFile(f);
+  })
+  
+  res.json({"success": true});
+});
+router.get('/s3/delete/file', async (req, res, next) => {
   const file = req.query.file;
   if(!file)
   {
