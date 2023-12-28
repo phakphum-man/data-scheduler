@@ -396,7 +396,7 @@ router.get('/s3/get/file', async (req, res) => {
   {
     return res.send(404);
   }
-  const fileContent = s3fs.readFileSync(path, { encoding: 'utf8', flag: 'r' });
+  const fileContent = s3fs.readFileSync(path);
   res.status(200).send(fileContent);
 });
 router.get('/s3/clear/files', async (req, res, next) => {
