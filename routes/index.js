@@ -53,7 +53,7 @@ router.get('/csv/fake/:record', async function(req, res) {
     const url = `https://drive.google.com/uc?export=download&id=${file_id_data}`;
     const fileName = `output${(new Date()).toISOString().slice(0,19).replace("T","_").replaceAll(":","")}.csv`;
     await generateAndWriteCSV(req.params.record, url, fileName);
-    return res.status(200).send(`write <a href="${req.protocol}://${req.get('host')}/s3/get/file?path=${s3fs.rootPath}fileservs/${fileName}">${fileName}</a> done!, you can see all files <a href="${req.protocol}://${req.get('host')}/s3/get/files?path=${s3fs.rootPath}fileservs">here</a>`);
+    return res.status(200).send(`write <a href="${req.protocol}://${req.get('host')}/s3/get/file?path=${s3fs.rootPath}fileservs/${fileName}" target="_blank">${fileName}</a> done!, you can see all files <a href="${req.protocol}://${req.get('host')}/s3/get/files?path=${s3fs.rootPath}fileservs">here</a>`);
   }
   return res.status(404).send();
 });
@@ -385,25 +385,26 @@ router.get('/s3/get/files', async (req, res, next) => {
   const path = req.query.path;
   if(!path)
   {
-    return res.send(404);
+    return res.status(404).send('404 Not Found');
   }
   const files = s3fs.getFileList(path);
   res.json(files);
 });
 router.get('/s3/get/file', async (req, res) => {
-  const path = req.query.path;
-  if(!path)
+  const filePath = req.query.path;
+  if(!filePath || !s3fs.existsSync(filePath))
   {
-    return res.send(404);
+    return res.status(404).send();
   }
-  const fileContent = s3fs.readFileSync(path);
-  res.status(200).send(fileContent);
+
+  const fileContent = s3fs.readFileSync(filePath);
+  return res.attachment(path.basename(filePath)).send(fileContent);
 });
 router.get('/s3/clear/files', async (req, res, next) => {
   const filePath = req.query.path;
   if(!filePath)
   {
-    return res.send(404);
+    return res.status(404).send();
   }
   const files = s3fs.getFileList(filePath);
   files.forEach((file)=>{
@@ -417,7 +418,7 @@ router.get('/s3/delete/file', async (req, res, next) => {
   const file = req.query.file;
   if(!file)
   {
-    return res.send(404);
+    return res.status(404).send();
   }
   s3fs.deleteFile(file);
   res.json({"success": true});

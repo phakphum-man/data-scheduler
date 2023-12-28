@@ -1,11 +1,19 @@
-const fs = require('@cyclic.sh/s3fs')(process.env.CYCLIC_BUCKET_NAME);
-
+const s3fs = require('@cyclic.sh/s3fs')(process.env.CYCLIC_BUCKET_NAME);
 const rootPath = !process.env.AWS_SECRET_ACCESS_KEY ?"./":"/";
+
+const existsSync = (filePath) => {
+  //@cyclic.sh/s3fs supports the following fs methods operating on AWS S3:
+  try{
+    return s3fs.existsSync(filePath);
+  }catch(e) {
+    throw e;
+  }
+}
 
 const writeFileSync = (filePath,  data, options = undefined) => {
   //@cyclic.sh/s3fs supports the following fs methods operating on AWS S3:
   try{
-    fs.writeFileSync(filePath, data, options);
+    s3fs.writeFileSync(filePath, data, options);
   }catch(e){
     throw e;
   }
@@ -14,7 +22,7 @@ const writeFileSync = (filePath,  data, options = undefined) => {
 const readFileSync = (filePath, options = undefined) => {
   //@cyclic.sh/s3fs supports the following fs methods operating on AWS S3:
   try{
-    const buffer = fs.readFileSync(filePath, options);
+    const buffer = s3fs.readFileSync(filePath, options);
     return buffer;
   }catch(e) {
     throw e;
@@ -24,7 +32,7 @@ const readFileSync = (filePath, options = undefined) => {
 const mkdirSync = (path, options = undefined) => {
   //@cyclic.sh/s3fs supports the following fs methods operating on AWS S3:
   try{
-    fs.mkdirSync(path, options);
+    s3fs.mkdirSync(path, options);
   }catch(e) {
     throw e;
   }
@@ -33,7 +41,7 @@ const mkdirSync = (path, options = undefined) => {
 const rmdirSync = (path, options = undefined) => {
   //@cyclic.sh/s3fs supports the following fs methods operating on AWS S3:
   try{
-    fs.rmdirSync(path, options);
+    s3fs.rmdirSync(path, options);
   }catch(e) {
     throw e;
   }
@@ -41,21 +49,21 @@ const rmdirSync = (path, options = undefined) => {
 
 const deleteFile = (filePath) => {
     //@cyclic.sh/s3fs supports the following fs methods operating on AWS S3:
-    const fileExists = fs.existsSync(filePath);
+    const fileExists = s3fs.existsSync(filePath);
     if(!fileExists){
         return { result:"File not found"};
     }
-    fs.unlinkSync(filePath);
+    s3fs.unlinkSync(filePath);
 }
 
 const getFileList = (path) => {
     //@cyclic.sh/s3fs supports the following fs methods operating on AWS S3:
     try{
-      const files = fs.readdirSync(path);
+      const files = s3fs.readdirSync(path);
       return files;
     }catch(e){
       return { result:"directory not found" };
     }
 }
 
-module.exports = { rootPath, writeFileSync, readFileSync, mkdirSync, rmdirSync, deleteFile, getFileList };
+module.exports = { rootPath, existsSync, writeFileSync, readFileSync, mkdirSync, rmdirSync, deleteFile, getFileList };
