@@ -53,7 +53,7 @@ router.get('/csv/fake/:record', async function(req, res) {
     const url = `https://drive.google.com/uc?export=download&id=${file_id_data}`;
     const fileName = `output${(new Date()).toISOString().slice(0,19).replace("T","_").replaceAll(":","")}.csv`;
     await generateAndWriteCSV(req.params.record, url, fileName);
-    return res.status(200).send(`write <a href="${req.protocol}://${req.get('host')}/s3/get/file?path=/fileservs/${fileName}">${fileName}</a> done!, you can see all files <a href="${req.protocol}://${req.get('host')}/s3/get/files?path=${s3fs.rootPath}fileservs">here</a>`);
+    return res.status(200).send(`write <a href="${req.protocol}://${req.get('host')}/s3/get/file?path=${s3fs.rootPath}fileservs/${fileName}">${fileName}</a> done!, you can see all files <a href="${req.protocol}://${req.get('host')}/s3/get/files?path=${s3fs.rootPath}fileservs">here</a>`);
   }
   return res.status(404).send();
 });
